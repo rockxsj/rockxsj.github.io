@@ -6,33 +6,42 @@
     <description>Recent content in Javascript-rsses on 我的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 12 Oct 2016 11:29:20 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 20 Oct 2016 15:42:18 +0800</lastBuildDate>
     <atom:link href="http://rockxsj.github.io/javascript/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>events</title>
-      <link>http://rockxsj.github.io/javascript/events/</link>
-      <pubDate>Wed, 12 Oct 2016 11:29:20 +0800</pubDate>
+      <title>casperjs等待ajax请求结束</title>
+      <link>http://rockxsj.github.io/javascript/casperjs%E7%AD%89%E5%BE%85ajax%E8%AF%B7%E6%B1%82%E7%BB%93%E6%9D%9F/</link>
+      <pubDate>Thu, 20 Oct 2016 15:42:18 +0800</pubDate>
       
-      <guid>http://rockxsj.github.io/javascript/events/</guid>
-      <description>
+      <guid>http://rockxsj.github.io/javascript/casperjs%E7%AD%89%E5%BE%85ajax%E8%AF%B7%E6%B1%82%E7%BB%93%E6%9D%9F/</guid>
+      <description>&lt;p&gt;在做前端自动化测试的时候可能需要等待某些ajax请求执行完之后再执行比如截图之类的操作，
+在实际使用过程中我是这么实现的：&lt;/p&gt;
 
-&lt;h1 id=&#34;事件如何冒泡&#34;&gt;事件如何冒泡？&lt;/h1&gt;
+&lt;pre&gt;&lt;code&gt;var dataUrls = [&#39;http://xxxx.com/dota/data/&#39;, &#39;http://xxxx.tv/dm/&#39;];
+var counts = {};
+casper.on(&#39;resource.requested&#39;, function(resource) {
+    Array.prototype.map.call(dataUrls, function(url) {
+    	if (resource.url.indexOf(url) !== -1) {
+    		casper.log(&amp;quot;request:&amp;quot; + resource.url, &amp;quot;debug&amp;quot;);
+    		counts[&#39;requested&#39;]++;
+    	}
+    })
+});
 
-&lt;p&gt;事件冒泡&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>vue</title>
-      <link>http://rockxsj.github.io/javascript/vue/</link>
-      <pubDate>Wed, 12 Oct 2016 11:19:28 +0800</pubDate>
-      
-      <guid>http://rockxsj.github.io/javascript/vue/</guid>
-      <description>&lt;ul&gt;
-&lt;li&gt;什么是vue&lt;/li&gt;
-&lt;li&gt;可以用来做什么&lt;/li&gt;
-&lt;/ul&gt;
+casper.on(&#39;resource.received&#39;, function(resource) {
+    Array.prototype.map.call(dataUrls, function(url) {
+    	if (resource.url.indexOf(url) !== -1 &amp;amp;&amp;amp; resource.stage === &#39;end&#39;) {
+    		casper.log(&amp;quot;responsed:&amp;quot; + resource.url, &amp;quot;debug&amp;quot;);
+    		counts[&#39;responsed&#39;]++;
+    	}
+    })
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;也就是等待包含特定网址的request数和response数相等的时候，认为请求已经完成。&lt;/p&gt;
+
+&lt;p&gt;当然，请求完成之后渲染页面和js执行还需要时间，所以最好再wait个几百毫秒，然后再进行后续操作。&lt;/p&gt;
 </description>
     </item>
     
